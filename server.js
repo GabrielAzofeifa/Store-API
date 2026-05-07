@@ -193,6 +193,25 @@ app.put('/productos/:id', verificarToken, async (req, res) => {
 
 // --- RUTA DE ELIMINACIÓN (DELETE) ---
 
+// RUTA PARA ELIMINAR UN USUARIO (Protegida)
+app.delete('/auth/usuarios/:id', verificarToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        
+        // Ejecutamos la eliminación en la tabla api_users
+        const result = await pool.query('DELETE FROM api_users WHERE id = $1', [id]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ mensaje: "Usuario no encontrado" });
+        }
+
+        res.json({ mensaje: `Usuario con ID ${id} eliminado correctamente` });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Error al eliminar usuario" });
+    }
+});
+
 app.delete('/productos/:id', verificarToken, async (req, res) => {
     try {
         const { id } = req.params;
